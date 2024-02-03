@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dynamic chart</title>
+</head>
+<body>
+    
+    <div class="chart_container">
+        <canvas class="dynamicChart"></canvas>
+    </div>
+</body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let Dchart=document.querySelector(".dynamicChart");
+    let chartData=[];
+    let DataLabels=[];
+    let num=5;
+
+   
+    
+    const newChart=new Chart(Dchart,
+    {
+    type: 'line',
+    data: {
+      labels: DataLabels,
+      datasets: [{
+        label: '# of Votes',
+        data: chartData,
+        borderWidth: 2,
+        backgroundColor:["pink","grey","limegreen",'orange',"yellow"],
+        borderColor:'blue'
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  async function fetchApi(){
+      let realdata= await fetch("https://netdata.firehol.org/api/v1/data?chart=system.cpu&points=1&after=-10&options=seconds")
+      chartData=realdata.data;
+      DataLabels=realdata.labels;
+      newChart.update();
+  }
+
+  setInterval(()=>{
+       chartData.push(Math.ceil(Math.random()*100));
+       DataLabels.push(num+5);
+       num+=5;
+       newChart.update();
+
+    },1000);
+</script>
+</html>
